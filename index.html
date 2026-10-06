@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef1f4">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12181e">
+<title>EFH Gommern – Stromkreise</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Zählerschrank">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#eef1f4; --panel:#ffffff; --ink:#18212b; --muted:#5d6b79; --line:#d3dae1;
+  --accent:#0b5cad; --accent-soft:#e1edf9; --hit:#ffe27a; --warn:#9a5b00; --warn-bg:#fff3d9;
+  --l1:#9c5f2a; --l2:#1d242c; --l3:#8c949c;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12181e; --panel:#1b232b; --ink:#e7ecf1; --muted:#98a6b3; --line:#2c3743;
+    --accent:#6db0f2; --accent-soft:#1c3247; --hit:#7a6a1c; --warn:#f0b75a; --warn-bg:#33290f;
+    --l1:#c68646; --l2:#cfd6dd; --l3:#8c949c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181e; --panel:#1b232b; --ink:#e7ecf1; --muted:#98a6b3; --line:#2c3743;
+  --accent:#6db0f2; --accent-soft:#1c3247; --hit:#7a6a1c; --warn:#f0b75a; --warn-bg:#33290f;
+  --l1:#c68646; --l2:#cfd6dd; --l3:#8c949c;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+:root{accent-color:var(--accent);--ease-out:cubic-bezier(.23,1,.32,1)}
+::selection{background:var(--accent-soft);color:var(--ink)}
+input{caret-color:var(--accent)}
+button,summary{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+.mono{font-family:ui-monospace,"SF Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+header{padding:14px 14px 4px;max-width:900px;margin:0 auto}
+h1{font-size:20px;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 14px 8px;max-width:900px;margin:0 auto}
+.search{position:relative}
+.search input{width:100%;font:inherit;font-size:16px;padding:12px 40px 12px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);outline:none}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search button{position:absolute;right:4px;top:4px;width:44px;height:44px;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;display:none}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.chip{font:inherit;font-size:14px;min-height:38px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer;transition:transform 120ms var(--ease-out),background-color 120ms,border-color 120ms}
+.chip:active,details>summary:active{transform:scale(.98)}
+@media (hover:hover) and (pointer:fine){.chip:hover{border-color:var(--accent)}details>summary:hover{background:var(--accent-soft);border-radius:10px}}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sp{flex:1}
+.count{font-size:13px;color:var(--muted);margin-top:6px}
+main{max-width:900px;margin:0 auto;padding:4px 14px 40px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:8px 0}
+details>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:center}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform 120ms var(--ease-out);flex:none;margin-right:2px}
+details[open]>summary::before{transform:rotate(45deg)}
+summary:focus-visible,.chip:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grp>summary{font-weight:600}
+.grp .gid{font-size:16px;min-width:2.6em}
+.gmeta{font-weight:400;color:var(--muted);font-size:13px;display:block}
+.gn{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.gbody{padding:0 10px 10px}
+.gbody .info{font-size:13px;color:var(--muted);padding:0 4px 8px}
+.circ{margin:6px 0;border-radius:8px;background:var(--bg);border:0}
+.circ>summary{padding:9px 12px}
+.circ .cid{font-weight:600;min-width:3.4em}
+.circ>summary{gap:8px}
+.circ .d{flex:1;min-width:0}
+.circ .w{font-size:12px;color:var(--muted)}
+.dot{flex:none;width:11px;height:11px;border-radius:50%;border:1px solid var(--line);background:transparent}
+.p1{background:var(--l1);border-color:var(--l1)}.p2{background:var(--l2);border-color:var(--l2)}.p3{background:var(--l3);border-color:var(--l3)}
+.tag{font-size:12px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;padding:2px 14px 12px 28px;font-size:14px}
+dt{color:var(--muted)}dd{margin:0}
+mark{background:var(--hit);color:inherit;border-radius:2px;padding:0 1px}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+.empty .chip{margin-top:12px;color:var(--ink)}
+.notes{background:var(--warn-bg);border-color:transparent}
+.notes>summary{color:var(--warn);font-weight:600}
+.notes ul{margin:0;padding:0 14px 12px 34px;font-size:14px}
+.notes li{margin:5px 0}
+.foot{color:var(--muted);font-size:12px;text-align:center;margin-top:18px}
+@media (prefers-reduced-motion:reduce){details>summary::before{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>EFH Gommern – Zählerschrank</h1>
+  <div class="sub">Stromkreise aus dem Plan · ebs · TN-S · Stand 22.11.2023 / Klemmenplan 21.05.2024</div>
+</header>
+<div class="bar">
+  <div class="search">
+    <input id="q" type="search" placeholder="Suchen: Küche, W26, F4.4, X5:3, L2 …" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Volltextsuche">
+    <button id="clr" aria-label="Suche leeren">×</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="count" id="cnt"></div>
+</div>
+<main id="out"></main>
+<p class="foot"><a href="plan.pdf" style="color:var(--accent)">Original-Plan als PDF</a></p>
+
+<script>
+/* ---------- Daten (aus dem Plan EFH_Gommern_21_05_2024.pdf) ---------- */
+const LS = "LS B 10 A · 6 kA";
+const MIX = {B:1,L:1};
+const FELD1 = "Feld ZH50D5S (Zähler/Anschluss)";
+const FELD2 = "Feld ZU59VT7APZ2 (Verteiler)";
+const FELD3 = "Feld ZU59KS (Verteiler)";
+
+const GROUPS = [
+ {id:"EIN", name:"Einspeisung & Schutz", sheet:"Hauptstromlaufplan Bl. 2", feld:FELD1,
+  info:"Hauptleitung vom Hausanschlusskasten bis zu den FI-Gruppen.",
+  items:[
+   {id:"W1", desc:"Einspeisung von Hausanschlusskasten", type:"NYM-J", cross:"5x16", prot:"–", term:"L1 L2 L3 N PE", ph:0, cat:"Sonstiges"},
+   {id:"Q01", desc:"Hauptschalter Verteilerfeld", prot:"SH3 · 63 A", term:"–", ph:0, cat:"Sonstiges"},
+   {id:"P1", desc:"EVU-Zähler (kWh)", prot:"–", term:"L1 L2 L3 N", ph:0, cat:"Sonstiges"},
+   {id:"F1", desc:"Hauptleitungsschutz (HTS)", prot:"HTS · 35 A · 25 kA", term:"–", ph:0, cat:"Sonstiges"},
+   {id:"F01", desc:"Überspannungsschutz (SPA)", prot:"SPA T1+T2+T3 · 20 kA / 25 kA · 1,5 kV", term:"L1 L2 L3 N PE", ph:0, cat:"Sonstiges"}
+  ]},
+ {id:"Q1", name:"FI Q1 – Beleuchtung", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 2 · Klemmenplan Bl. 1 (X1)", feld:FELD2, grpType:"X1",
+  items:[
+   ["F1.1","W2","Beleuchtung Ankleide, Bad, Schlafzimmer",1,1,"Beleuchtung"],
+   ["F1.2","W3","Beleuchtung Kinderzimmer EG, HWR, Küche Hinten",2,2,"Beleuchtung"],
+   ["F1.3","W4","Beleuchtung Küche, Wohnzimmer",3,3,"Beleuchtung"],
+   ["F1.4","W5","Beleuchtung Kinderzimmer 4 + Bad OG",4,1,"Beleuchtung"],
+   ["F1.5","W6","Beleuchtung HWR + Kinderzimmer 2+3 OG",5,2,"Beleuchtung"],
+   ["F1.6","W7","Beleuchtung Flur, EG Treppe",6,3,"Beleuchtung"],
+   ["F1.7","W8","Beleuchtung Keller, Flur",7,1,"Beleuchtung"],
+   ["F1.8","W9","Beleuchtung Keller Räume + Klingel",8,2,"Beleuchtung"]
+  ]},
+ {id:"Q2", name:"FI Q2 – Heizung, Markise, Flur OG", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 3 · Klemmenplan Bl. 2 (X2)", feld:FELD2, grpType:"X2",
+  items:[
+   ["F2.1","W10","Heizung",1,1,"Sonstiges"],
+   ["F2.2","W11","Beleuchtung Gäste WC + Keller",2,2,"Beleuchtung"],
+   ["F2.3","W12","Markise",3,3,"Sonstiges"],
+   ["F2.4","W13","Beleuchtung Reserve",4,1,"Beleuchtung"],
+   ["F2.5","W14","Beleuchtung Reserve",5,2,"Beleuchtung"],
+   ["F2.6","W15","Beleuchtung Reserve",6,3,"Beleuchtung"],
+   ["F2.7","W16","Heizkreisverteiler EG und OG",7,1,"Sonstiges"],
+   {id:"F2.8", w:"W17", desc:"Taster Flur OG (Steuerleitung zu K1)", n:"X2:8, X2:9, X2:10", ph:2, cat:"Sonstiges", type:"NYM-J", cross:"1x5x1.5", note:"Klemmen 9 und 10 sind im Klemmenplan mit „?“ als Phase markiert (schwarz/grau)."},
+   {id:"K1", w:"W18", desc:"Beleuchtung Flur OG (über Schaltrelais K1)", n:"X2:11", ph:2, cat:"Beleuchtung", type:"NYM-J", cross:"1x3x1.5", prot:"K1 · EPN510 · 16 A · 230 V AC", note:"Spule A1/A2 wird über den Taster W17 geschaltet."}
+  ]},
+ {id:"Q3", name:"FI Q3 – Herd & Reserve 3-phasig", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 4 · Klemmenplan Bl. 3 (X3)", feld:FELD2,
+  items:[
+   {id:"F3.1", w:"W19", desc:"Herd", n:"X3:1–3", ph:"L1 L2 L3", cat:"Sonstiges", type:"NYM-J", cross:"1x5x4", prot:"LS B 16 A · 6 kA · 3-polig"},
+   {id:"F3.2", w:"W20", desc:"(ohne Bezeichnung im Plan)", n:"X3:4–6", ph:"L1 L2 L3", cat:"Sonstiges", type:"NYM-J", cross:"1x5x4", prot:"Schmelzsicherung gG · 25 A · D02 · 3-polig"},
+   {id:"F3.3", w:"W21", desc:"(ohne Bezeichnung im Plan)", n:"X3:7–9", ph:"L1 L2 L3", cat:"Sonstiges", type:"NYM-J", cross:"1x5x4", prot:"Schmelzsicherung gG · 25 A · D02 · 3-polig"}
+  ]},
+ {id:"F2", name:"F2 – Verteilung Garage und Pumpen", rcd:"kein FI davor im Plan", sheet:"Hauptstromlaufplan Bl. 4 · Klemmenplan Bl. 8 (X8)", feld:FELD3,
+  items:[
+   {id:"F2", w:"W22", desc:"Verteilung Garage und Pumpen", n:"X8:1–3", ph:"L1 L2 L3", cat:"Sonstiges", type:"NYY-J", cross:"1x5x4", prot:"Schmelzsicherung gG · 25 A · D02 · 3-polig", note:"Im Hauptstromlaufplan hängt F2 direkt an der Sammelschiene, nicht hinter einem der FIs. Schutz wohl im Unterverteiler (Annahme)."}
+  ]},
+ {id:"Q4", name:"FI Q4 – Steckdosen Küche", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 5 · Klemmenplan Bl. 4 (X4)", feld:FELD3, grpType:"X4",
+  items:[
+   ["F4.1","W23","Steckdosen Küche TV",1,1,"Steckdosen"],
+   ["F4.2","W24","Steckdosen Küche 1",2,2,"Steckdosen"],
+   ["F4.3","W25","Steckdosen Küche 2",3,3,"Steckdosen"],
+   ["F4.4","W26","Steckdosen Küche 3, AP Spüle",4,1,"Steckdosen"],
+   ["F4.5","W27","Steckdosen Küche 4",5,2,"Steckdosen"],
+   ["F4.6","W28","Steckdosen Küche 5",6,3,"Steckdosen"],
+   ["F4.7","W29","Steckdosen Küche 6",7,1,"Steckdosen"],
+   ["F4.8","W30","Steckdosen Küche Vorraum",8,2,"Steckdosen"]
+  ]},
+ {id:"Q5", name:"FI Q5 – Steckdosen Wohnbereich", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 6 · Klemmenplan Bl. 5 (X5)", feld:FELD3, grpType:"X5",
+  items:[
+   ["F5.1","W31","Steckdosen Flur + Bad OG",1,1,"Steckdosen"],
+   ["F5.2","W32","Steckdosen Kinderzimmer 2+3 OG",2,2,"Steckdosen"],
+   ["F5.3","W33","Steckdosen Bad EG",3,3,"Steckdosen"],
+   ["F5.4","W34","Steckdosen Ankleide + Schlafzimmer",4,1,"Steckdosen"],
+   ["F5.5","W35","Steckdosen Kinderzimmer EG",5,2,"Steckdosen"],
+   ["F5.6","W36","Steckdosen Schlafzimmer 4-Fach Steckdosen",6,3,"Steckdosen"],
+   ["F5.7","W37","Steckdosen Flur EG",7,1,"Steckdosen"],
+   ["F5.8","W38","Steckdosen Wohnzimmer 4-Fach Steckdosen",8,2,"Steckdosen"]
+  ]},
+ {id:"Q6", name:"FI Q6 – Steckdosen Räume", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 7 · Klemmenplan Bl. 6 (X6)", feld:FELD3, grpType:"X6",
+  items:[
+   ["F6.1","W39","Steckdosen HWR",1,1,"Steckdosen"],
+   ["F6.2","W40","Steckdosen Wohnzimmer TV",2,2,"Steckdosen"],
+   ["F6.3","W41","Steckdosen Kinderzimmer 4",3,3,"Steckdosen"],
+   ["F6.4","W42","Steckdosen Kinderzimmer 2+3 Tür",4,1,"Steckdosen"],
+   ["F6.5","W43","Steckdosen Kinderzimmer 3+4",5,2,"Steckdosen"],
+   ["F6.6","W44","Steckdosen Kinderzimmer 3 Dach",6,3,"Steckdosen"],
+   ["F6.7","W45","Steckdosen Keller + WC Gast",7,1,"Steckdosen"],
+   ["F6.8","W46","Steckdosen Keller 1 + 2",8,2,"Steckdosen"]
+  ]},
+ {id:"Q7", name:"FI Q7 – Steckdosen Technik", rcd:"CDA · 40 A · 30 mA · Typ A", sheet:"Hauptstromlaufplan Bl. 8 · Klemmenplan Bl. 7 (X7)", feld:FELD3, grpType:"X7",
+  items:[
+   ["F7.1","W47","Steckdosen Wohnzimmer Außen",1,1,"Steckdosen"],
+   ["F7.2","W48","Steckdosen Küche Kochinsel",2,2,"Steckdosen"],
+   ["F7.3","W49","Steckdosen Datenschrank",3,3,"Steckdosen"],
+   ["F7.4","W50","Steckdosen HWRT",4,1,"Steckdosen"],
+   ["F7.5","W51","Steckdosen Werkstatt",5,2,"Steckdosen"],
+   ["F7.6","W52","Steckdosen TR",6,3,"Steckdosen"],
+   ["F7.7","W53","Steckdosen Heizungsraum",7,1,"Steckdosen"],
+   ["F7.8","W54","Steckdosen Werkstatt 2",8,2,"Steckdosen"]
+  ]}
+];
+
+/* Normalisieren: Array-Kurzform -> Objekt */
+for (const g of GROUPS){
+  g.items = g.items.map(it=>{
+    if (Array.isArray(it)){
+      const [id,w,desc,t,ph,cat] = it;
+      return {id, w, desc, n:g.grpType+":"+t, ph:"L"+ph, cat, type:"NYM-J", cross:"1x3x1.5", prot:LS+" · 1-polig"};
+    }
+    if (it.w===undefined && it.id.startsWith("W")) { it.w=""; }
+    return it;
+  });
+  g.items.forEach(it=>{
+    if (typeof it.ph==="number" && it.ph>0) it.ph="L"+it.ph;
+    it.phn = (typeof it.ph==="string" && /^L[123]$/.test(it.ph)) ? +it.ph[1] : 0;
+    it.ph = it.ph===0 ? "" : it.ph;
+    it.hay = [g.id,g.name,g.rcd||"",g.feld,g.sheet,it.id,it.w,it.desc,it.n||it.term||"",it.ph,it.cat,it.type||"",it.cross||"",it.prot||"",it.note||""].join(" | ");
+  });
+}
+GROUPS.forEach(g=>g.hay=[g.id,g.name,g.rcd||"",g.feld].join(" | "));
+
+/* ---------- Hilfsfunktionen ---------- */
+const norm = s => s.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[–—]/g,"-");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hl(text, terms){
+  const ts = terms.filter(Boolean).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
+  if (!ts.length) return esc(text);
+  const re = new RegExp("("+ts.join("|")+")","gi");
+  return String(text).split(re).map((part,i)=> i%2 ? "<mark>"+esc(part)+"</mark>" : esc(part)).join("");
+}
+
+/* ---------- State & Filter ---------- */
+const state = {q:"", cat:null, ph:null, open:new Set(), closed:new Set(), allOpen:false};
+const chipsEl = document.getElementById("chips");
+const CATS = ["Beleuchtung","Steckdosen","Sonstiges"];
+function renderChips(){
+  chipsEl.innerHTML =
+    CATS.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${state.cat===c}">${c}</button>`).join("")
+    + [1,2,3].map(n=>`<button class="chip ph" data-ph="${n}" aria-pressed="${state.ph===n}">L${n}</button>`).join("")
+    + `<span class="sp"></span><button class="chip btn" id="tgl">${state.allOpen?"Alle einklappen":"Alle ausklappen"}</button>`;
+}
+chipsEl.addEventListener("click",e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  if (b.dataset.cat){ state.cat = state.cat===b.dataset.cat ? null : b.dataset.cat; }
+  else if (b.dataset.ph){ const n=+b.dataset.ph; state.ph = state.ph===n ? null : n; }
+  else if (b.id==="tgl"){ state.allOpen = !state.allOpen; state.open.clear(); state.closed.clear(); }
+  render();
+});
+
+function render(){
+  const terms = norm(state.q).split(/\s+/).filter(Boolean);
+  const rawTerms = state.q.trim().split(/\s+/).filter(Boolean);
+  const searching = terms.length>0 || state.cat || state.ph;
+  let shown = 0, total = 0, html = "";
+
+  for (const g of GROUPS){
+    const items = g.items.filter(it=>{
+      total++;
+      if (state.cat && it.cat!==state.cat) return false;
+      if (state.ph && it.phn!==state.ph && !(it.ph||"").includes("L"+state.ph)) return false;
+      const h = norm(it.hay);
+      return terms.every(t=>h.includes(t));
+    });
+    if (!items.length) continue;
+    shown += items.length;
+    const gOpen = !state.closed.has("g"+g.id) && (terms.length>0 || state.allOpen || state.open.has("g"+g.id));
+    html += `<details class="grp" data-k="g${g.id}" ${gOpen?"open":""}>
+      <summary><span class="gid mono">${esc(g.id==="EIN"?"Netz":g.id)}</span>
+      <span>${hl(g.name.replace(/^FI Q\d\s?[–-]?\s?|^F2 – /,"")||g.name,rawTerms)}<span class="gmeta">${hl([g.rcd,g.feld].filter(Boolean).join(" · "),rawTerms)}</span></span>
+      <span class="gn">${items.length}${items.length!==g.items.length?" / "+g.items.length:""}</span></summary>
+      <div class="gbody"><div class="info">${esc(g.sheet)}${g.info?" · "+esc(g.info):""}</div>`;
+    for (const it of items){
+      const cOpen = !state.closed.has("c"+it.id) && ((terms.length>0 && items.length<=6) || state.allOpen || state.open.has("c"+it.id));
+      const term = it.n || it.term || "–";
+      html += `<details class="circ" data-k="c${it.id}" ${cOpen?"open":""}>
+        <summary><i class="dot p${it.phn}" aria-hidden="true"></i><span class="cid mono">${hl(it.id,rawTerms)}</span>
+        <span class="d">${hl(it.desc,rawTerms)}${it.w?`<span class="w mono"> ${hl(it.w,rawTerms)}</span>`:""}</span>
+        ${it.phn?`<span class="tag mono">L${it.phn}</span>`:""}</summary>
+        <dl>
+          ${it.prot?`<dt>Schutz</dt><dd>${hl(it.prot,rawTerms)}</dd>`:""}
+          ${it.w?`<dt>Leitung</dt><dd class="mono">${hl(it.w+" · "+(it.type||"")+" "+(it.cross||""),rawTerms)}</dd>`:(it.type?`<dt>Leitung</dt><dd class="mono">${hl(it.type+" "+it.cross,rawTerms)}</dd>`:"")}
+          <dt>Klemme</dt><dd class="mono">${hl(term,rawTerms)}</dd>
+          ${it.ph?`<dt>Phase</dt><dd class="mono">${hl(it.ph,rawTerms)}</dd>`:""}
+          <dt>Art</dt><dd>${hl(it.cat,rawTerms)}</dd>
+          ${it.note?`<dt>Hinweis</dt><dd>${hl(it.note,rawTerms)}</dd>`:""}
+        </dl></details>`;
+    }
+    html += `</div></details>`;
+  }
+
+  if (!shown) html = `<div class="empty">Kein Treffer für diese Suche und Filter.<br><button class="chip" id="reset">Suche und Filter zurücksetzen</button></div>`;
+
+  if (!searching){
+    html += `<details class="notes"><summary>Auffälligkeiten im Plan (3)</summary><ul>
+      <li>X2:9 und X2:10 (Taster Flur OG, W17): Phase im Klemmenplan nur mit „?“.</li>
+      <li>W20 und W21 (F3.2, F3.3): Abgang ohne Bezeichnung, 25 A gG auf 5x4 mm².</li>
+      <li>F2 (W22, Garage und Pumpen): im Plan kein FI davor.</li>
+    </ul></details>`;
+  }
+  document.getElementById("out").innerHTML = html;
+  document.getElementById("cnt").textContent = searching
+    ? `${shown} von ${total} Einträgen`
+    : `${GROUPS.reduce((a,g)=>a+g.items.length,0)} Einträge in ${GROUPS.length} Gruppen`;
+  renderChips();
+  document.getElementById("clr").style.display = state.q ? "block":"none";
+}
+
+/* Nur echte Klicks auf eine Zeile merken */
+document.getElementById("out").addEventListener("click",e=>{
+  const sm = e.target.closest("summary"); if(!sm) return;
+  const d = sm.parentElement, k = d.dataset.k; if(!k) return;
+  const willOpen = !d.open;           /* Klick-Standard läuft erst danach */
+  if (willOpen){ state.open.add(k); state.closed.delete(k); }
+  else { state.open.delete(k); state.closed.add(k); }
+});
+
+document.getElementById("out").addEventListener("click",e=>{
+  if (e.target.id==="reset"){ q.value=""; state.q=""; state.cat=null; state.ph=null; render(); }
+});
+const q = document.getElementById("q");
+q.addEventListener("input",()=>{ state.q=q.value; state.open.clear(); state.closed.clear(); render(); });
+document.getElementById("clr").addEventListener("click",()=>{ q.value=""; state.q=""; render(); q.focus(); });
+render();
+if ("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+</body>
+</html>
